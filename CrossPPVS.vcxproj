@@ -190,6 +190,56 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\include\application\application.cpp" />
+    <ClCompile Include="src\include\application\control\button.cpp" />
+    <ClCompile Include="src\include\application\control\checkbox.cpp" />
+    <ClCompile Include="src\include\application\control\colorPicker.cpp" />
+    <ClCompile Include="src\include\application\control\control.cpp" />
+    <ClCompile Include="src\include\application\control\eventTranslator.cpp" />
+    <ClCompile Include="src\include\application\control\form\fileDialog.cpp" />
+    <ClCompile Include="src\include\application\control\form\form.cpp" />
+    <ClCompile Include="src\include\application\control\form\messageBox.cpp" />
+    <ClCompile Include="src\include\application\control\label.cpp" />
+    <ClCompile Include="src\include\application\control\listControl.cpp" />
+    <ClCompile Include="src\include\application\control\pictureBox.cpp" />
+    <ClCompile Include="src\include\application\control\slider.cpp" />
+    <ClCompile Include="src\include\application\control\textBox.cpp" />
+    <ClCompile Include="src\include\application\control\touchJoystick.cpp" />
+    <ClCompile Include="src\include\application\initialize.cpp" />
+    <ClCompile Include="src\include\application\interaction.cpp" />
+    <ClCompile Include="src\include\array\wstringFunctions.cpp" />
+    <ClCompile Include="src\include\filesystem\fpng\fpng.cpp" />
+    <ClCompile Include="src\include\filesystem\iserializable.cpp" />
+    <ClCompile Include="src\include\filesystem\jsonReader.cpp" />
+    <ClCompile Include="src\include\interface\idestructable.cpp" />
+    <ClCompile Include="src\include\math\bodypart2d.cpp" />
+    <ClCompile Include="src\include\math\collisions.cpp" />
+    <ClCompile Include="src\include\math\frustum.cpp" />
+    <ClCompile Include="src\include\math\graphics\brush\brush.cpp" />
+    <ClCompile Include="src\include\math\graphics\brush\brushes.cpp" />
+    <ClCompile Include="src\include\math\graphics\brush\font\font.cpp" />
+    <ClCompile Include="src\include\math\graphics\brush\font\fontfamily.cpp" />
+    <ClCompile Include="src\include\math\graphics\color\color.cpp" />
+    <ClCompile Include="src\include\math\graphics\resolutiontexture.cpp" />
+    <ClCompile Include="src\include\math\graphics\texture.cpp" />
+    <ClCompile Include="src\include\math\graphics\video\videoEncoder.cpp" />
+    <ClCompile Include="src\include\math\intersectable.cpp" />
+    <ClCompile Include="src\include\math\intersectableCuboid.cpp" />
+    <ClCompile Include="src\include\math\keyframe.cpp" />
+    <ClCompile Include="src\include\math\LayerNoiseSimplex.cpp" />
+    <ClCompile Include="src\include\math\meshfunctions.cpp" />
+    <ClCompile Include="src\include\math\random\random.cpp" />
+    <ClCompile Include="src\include\math\SimplexNoise.cpp" />
+    <ClCompile Include="src\include\math\sound\sound.cpp" />
+    <ClCompile Include="src\include\math\timemath.cpp" />
+    <ClCompile Include="src\include\math\triangle.cpp" />
+    <ClCompile Include="src\include\math\wave\waveShaper.cpp" />
+    <ClCompile Include="src\include\network\client\clientInput.cpp" />
+    <ClCompile Include="src\include\network\compressedPacket.cpp" />
+    <ClCompile Include="src\include\optimization\handleError.cpp" />
+    <ClCompile Include="src\include\sound\audio2d.cpp" />
+    <ClCompile Include="src\include\sound\audioSource.cpp" />
+    <ClCompile Include="src\include\sound\soundHandler2D.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -317,6 +367,7 @@
     <ClInclude Include="src\include\math\physics\gravity\gravity.h" />
     <ClInclude Include="src\include\math\point3.h" />
     <ClInclude Include="src\include\math\random\random.h" />
+    <ClInclude Include="src\include\math\random\randomBytes.h" />
     <ClInclude Include="src\include\math\random\shufflerandom.h" />
     <ClInclude Include="src\include\math\ray.h" />
     <ClInclude Include="src\include\math\raycast.h" />
@@ -347,8 +398,11 @@
     <ClInclude Include="src\include\optimization\optimization.h" />
     <ClInclude Include="src\include\optimization\stableTickLoop.h" />
     <ClInclude Include="src\include\sound\audio2d.h" />
+    <ClInclude Include="src\include\sound\AudioSource.h" />
+    <ClInclude Include="src\include\sound\AudioType.h" />
     <ClInclude Include="src\include\sound\soundHandler2D.h" />
     <ClInclude Include="src\include\type\conversion.h" />
+    <ClInclude Include="src\include\type\EnumTricks.h" />
     <ClInclude Include="src\include\type\types.h" />
     <ClInclude Include="src\include\windowsIncluder.h" />
     <ClInclude Include="src\nbt\serializeOptional.h" />

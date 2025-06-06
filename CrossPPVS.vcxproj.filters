@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\include">
+      <UniqueIdentifier>{675b7c78-cc56-49b5-a1cd-d49db433aabc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -20,6 +23,156 @@
     </ClCompile>
     <ClCompile Include="src\stdafx.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\application\application.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\sound\audio2d.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\sound\audioSource.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\bodypart2d.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\graphics\brush\brush.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\graphics\brush\brushes.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\application\control\button.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\application\control\checkbox.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\network\client\clientInput.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\collisions.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\graphics\color\color.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\application\control\colorPicker.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\network\compressedPacket.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\application\control\control.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\application\control\eventTranslator.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\application\control\form\fileDialog.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\graphics\brush\font\font.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\graphics\brush\font\fontfamily.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\application\control\form\form.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\filesystem\fpng\fpng.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\frustum.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\optimization\handleError.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\interface\idestructable.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\application\initialize.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\application\interaction.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\intersectable.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\intersectableCuboid.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\filesystem\iserializable.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\filesystem\jsonReader.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\keyframe.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\application\control\label.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\LayerNoiseSimplex.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\application\control\listControl.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\meshfunctions.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\application\control\form\messageBox.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\application\control\pictureBox.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\random\random.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\graphics\resolutiontexture.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\SimplexNoise.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\application\control\slider.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\sound\sound.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\sound\soundHandler2D.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\application\control\textBox.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\graphics\texture.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\timemath.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\application\control\touchJoystick.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\triangle.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\graphics\video\videoEncoder.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\math\wave\waveShaper.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="src\include\array\wstringFunctions.cpp">
+      <Filter>Source Files\include</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -498,6 +651,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\nbt\serializeOptional.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\math\random\randomBytes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\sound\AudioSource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\sound\AudioType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\include\type\EnumTricks.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

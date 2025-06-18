@@ -8,4 +8,9 @@ struct Molecule : public RigidBody {
 	vec3 velocity = vec3();
 	vec3 acceleration = vec3();
 	color color{};
+	//to prevent velocities being 'passed around' when molecules collide
+	vec3 newVelocity = vec3();
+	std::mutex mutex{};
+	std::vector<Molecule*> collidedWith{};
+	bool shouldDelete = false;
 };

@@ -5,20 +5,17 @@
 /// this gravity simulator makes use of the barnes-hut gravity algorithm
 /// http://arborjs.org/docs/barnes-hut
 /// </summary>
-struct BarnesHutTile
+struct BarnesHutTile : public RigidBody
 {
-	static constexpr fp gravitationalConstant = 0.001;
+	static constexpr fp gravitationalConstant = 0.0001;
 	static constexpr fp theta = 0.5;
 	BarnesHutTile* children[8]{};
 	crectangle3 bounds;
-	vec3 centerOfMass = vec3();
-	fp summedMass = 0;
-	RigidBody* body = nullptr;
 	int bodyCount = 0;
 	inline BarnesHutTile(crectangle3& bounds = rectangle3()) :bounds(bounds)
 	{
 	}
-	void AddQuadrant(RigidBody* body)
+	inline void AddQuadrant(RigidBody* body)
 	{
 		vec3 relative = body->centerOfMass - bounds.getCenter();
 		int index = 0;
@@ -42,18 +39,18 @@ struct BarnesHutTile
 		children[index]->AddBodyUnsafe(body);
 
 	}
-	void AddBody(RigidBody* body) {
+	inline void AddBody(RigidBody* body) {
 		if (bounds.contains(body->centerOfMass))
 			AddBodyUnsafe(body);
 	}
-	void AddBodyUnsafe(RigidBody* body)
+	inline void AddBodyUnsafe(RigidBody* body)
 	{
 		bodyCount++;
 		if (bodyCount > 1)
 		{
-			if (this->body != nullptr)
+			if (bodyCount == 2)
 			{
-				if (this->body->centerOfMass == body->centerOfMass)
+				if (this->centerOfMass == body->centerOfMass)
 				{
 					//simply dont add the molecule. the mass has been added.
 					return;
@@ -61,8 +58,9 @@ struct BarnesHutTile
 				else
 				{
 					//separate both molecules into different quadrants
-					AddQuadrant(this->body);
-					this->body = nullptr;
+					AddQuadrant(this);
+					this->centerOfMass = vec3();
+					this->mass = 0;
 				}
 			}
 			AddQuadrant(body);
@@ -70,62 +68,49 @@ struct BarnesHutTile
 		}
 		else
 		{
-			this->body = body;
+			this->centerOfMass = body->centerOfMass;
+			this->mass = body->mass;
 		}
 	}
-	void CalculateMassDistribution()
+	inline void CalculateMassDistribution()
 	{
-		if (body)
-		{
-			centerOfMass = body->centerOfMass;
-			summedMass = body->mass;
-		}
-		else
+		if (bodyCount > 1)
 		{
 			for (int i = 0; i < 0x8; i++)
 			{
 				if (children[i] != nullptr)
 				{
 					children[i]->CalculateMassDistribution();
-					summedMass += children[i]->summedMass;
-					centerOfMass += children[i]->summedMass * children[i]->centerOfMass;
+					mass += children[i]->mass;
+					centerOfMass += children[i]->mass * children[i]->centerOfMass;
 				}
 			}
-			centerOfMass /= summedMass;
+			centerOfMass /= mass;
 		}
 	}
-	vec3 CalculateForce(vec3 targetPos)
+	inline vec3 CalculateForce(vec3 targetPos)
 	{
 		constexpr fp radius = 1;
-		if (bodyCount == 1)
-		{
-			return calculateAcceleration(targetPos, centerOfMass, summedMass, gravitationalConstant, radius);
-		}
-		else
-		{
-			//h / r < t
-			//h / r * r < t * r
-			//TODO: Optimize
-			double rr = (centerOfMass - targetPos).lengthSquared();
+		if (bodyCount == 1 ||
 			//s / r < t
 			//square everything
 			//(s * s) / (r * r) < (t * t)
-			if (math::squared(bounds.size.x) / rr < math::squared(theta))
+			math::squared(bounds.size.x) / (centerOfMass - targetPos).lengthSquared() < math::squared(theta)
+			)
+		{
+			return calculateAcceleration(targetPos, centerOfMass, mass, gravitationalConstant, radius);
+		}
+		else
+		{
+			vec3 totalForce{};
+			for (int i = 0; i < 0x8; i++)
 			{
-				return calculateAcceleration(targetPos, centerOfMass, summedMass, gravitationalConstant, radius);
-			}
-			else
-			{
-				vec3 totalForce{};
-				for (int i = 0; i < 0x8; i++)
+				if (children[i] != nullptr)
 				{
-					if (children[i] != nullptr)
-					{
-						totalForce += children[i]->CalculateForce(targetPos);
-					}
+					totalForce += children[i]->CalculateForce(targetPos);
 				}
-				return totalForce;
 			}
+			return totalForce;
 		}
 	}
 	//static vec3 CalculateAcceleration(vec3 pos0, vec3 pos1, double m1, double gravityConstant)
@@ -147,17 +132,18 @@ struct BarnesHutTile
 	//	////diff * ((m1 * g) / (d * d * d))
 	//	//return difference * ((m1 * gravityConstant) / (distanceSquared * std::sqrt(distanceSquared)));
 	//}
-	~BarnesHutTile() {
+	inline ~BarnesHutTile() {
 		for (BarnesHutTile* child : children) {
 			delete child;
 		}
 	}
-	void clear() {
+	inline void clear() {
 		for (BarnesHutTile*& child : children) {
 			delete child;
 			child = nullptr;
 		}
 		bodyCount = 0;
-		body = nullptr;
+		centerOfMass = vec3();
+		mass = 0;
 	}
 };

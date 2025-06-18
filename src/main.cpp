@@ -12,57 +12,35 @@
 #include <math/graphics/brush/brushes/DepthBufferBrush.h>
 #include <application/control/Graph.h>
 #include <math/graphics/video/videoWriter.h>
+#include <execution>
+#include <array/arrayFunctions/arrayFunctions.h>
 
 constexpr rectangle3 bounds = rectangle3().expanded(0x1000);
-constexpr int startingMoleculeCount = isDebugging ? 0x100 : 0x100;
+constexpr int startingMoleculeCount = isDebugging ? 0x10 : 0x1000;
+constexpr fp moleculeRadius = 0.5;
+constexpr fp doubleMoleculeRadius = moleculeRadius * 2;
+constexpr rectangle3 startingPlanetRect = rectangle3().expanded((fp)math::cbrt(startingMoleculeCount) * moleculeRadius);
+constexpr vec3 initialCameraPosition = vec3(0, -startingPlanetRect.size.getX(), 0);
+
 BarnesHutTile mainTile = BarnesHutTile(bounds);
 fastList<Molecule*> molecules{};
 std::mt19937 currentRandom = getRandomFromSeed(getmicroseconds());
-//constexpr fp targetRadius = 0.2;
 
 
-//https://en.wikipedia.org/wiki/Lennard-Jones_potential
-//epsilon = depth of the potential well energy scale
-//sigma = the distance where the potential energy = 0 (no attraction or repulsion)
-//+ = repulsion, - = attraction
-static constexpr fp lennartJonesForce(cfp& distance, cfp& epsilon, cfp& sigma) {
-	cfp& divided = sigma / distance;
-	cfp& divided2 = divided * divided;
-	cfp& divided6 = divided2 * divided2 * divided2;
-	cfp& divided12 = divided6 * divided6;
-	return 4 * epsilon * (2 * divided12 - divided6) / distance;
-}
-
-fp distancePart = 5.0 / 6.0;
-fp b = -0.25;
-fp squareMultiplier = 9.0;
-
-static constexpr fp safeCollisionForce(cfp& distance) {
-	return distance > 1 ? 0 : math::squared(distance - distancePart) * squareMultiplier - b;
-}
-
-//other arguments are filled in already
-//proof till compression force of 0.3
-static constexpr fp orbitForce(fp distance) {
-	return safeCollisionForce(distance) * 0.1;
-}
-
-static constexpr fp runTests(cfp compressionForce, fp distance, fp acceleration, fp speed, fp interval) {
-	//a constant compression force between the molecules, pulling them together
-	for (int iteration = 0; iteration < 0x100 / interval; iteration++) {
-		//*2 because both particles get drawn to eachother
-		acceleration = compressionForce + orbitForce(distance) * 2;
-		predictBehavior(acceleration, speed, distance, interval);
+struct {
+	//https://leanrada.com/notes/sweep-and-prune/
+	//use this for sorting the molecules to optimize for collision detection
+	inline bool operator ()(Molecule* m1, Molecule* m2) {
+		return m1->centerOfMass.x < m2->centerOfMass.x;
 	}
-	return distance;
-}
-constexpr fp formulaTest = runTests(0.05, 3, 0, 0, 1);
+} moleculeSorter;
+GridContainer closeMolecules{};
+
 struct gameForm : public form
 {
 	videoWriter* writer{};
-	Graph* lennartJonesForceGraph;
 	//absolute
-	vec3 cameraPosition = vec3(0, -0x200, 0);
+	vec3 cameraPosition = initialCameraPosition;
 	mat3x3 rotationTransform = mat3x3();
 	vec3 cameraVelocity = vec3();
 	bool shift = false;
@@ -74,20 +52,22 @@ struct gameForm : public form
 	static constexpr vec3 forward = vec3(0, 1, 0);
 	static constexpr vec3 up = vec3(0, 0, 1);
 	static constexpr vec3 right = vec3(1, 0, 0);
-	gameForm() : lennartJonesForceGraph(new Graph(orbitForce, rectangle2(0, -10, 20, 20)))
+	gameForm()
 	{
-		this->children = { lennartJonesForceGraph };
 		resetSimulation();
 	}
 	void resetSimulation() {
-
-		constexpr rectangle3 startingPlanetRect = rectangle3().expanded(0x10);
 		molecules.clear();
+		closeMolecules = GridContainer();
 		//fill with molecules
 		for (int i = 0; i < startingMoleculeCount; i++) {
 			vec3 startingPos = getRandomPointInSphere(currentRandom, startingPlanetRect);
-			molecules.push_back(new Molecule(startingPos, 1, hsv2rgb(colorf(startingPos.normalized().getRotation() * math::radiansToDegrees, (startingPos.z - startingPlanetRect.pos0.z) / startingPlanetRect.size.z, 1))));
+			Molecule* m = new Molecule(startingPos, 1, hsv2rgb(colorf(startingPos.normalized().getRotation() * math::radiansToDegrees, (startingPos.z - startingPlanetRect.pos0.z) / startingPlanetRect.size.z, 1)));
+			molecules.push_back(m);
+			closeMolecules.addValue(m);
 		}
+
+
 		//molecules.push_back(new Molecule(vec3(0, 0, 0), 1, colorPalette::blue));
 		//molecules.push_back(new Molecule(vec3(1, 0, 0), 1, colorPalette::red));
 
@@ -98,23 +78,20 @@ struct gameForm : public form
 		delete writer;
 	}
 	virtual void layout(crectanglei2& newRect) override;
+	void startRecording() {
+		delete writer;
+		writer = new videoWriter(rect.size, 60, workingDirectory / ("video " + timeToString("{:%Y-%m-%d_%H-%M-%S}") + ".mp4"));
+	}
 	void updateStream()
 	{
 	}
 	virtual void keyDown(cvk& keyCode) override
 	{
-		fp mult = shift ? 1.1 : 1.0 / 1.1;
-		if (keyCode == vk::Z) {
-			distancePart *= mult;
-		}
-		else if (keyCode == vk::X) {
-			squareMultiplier *= mult;
-		}
-		else if (keyCode == vk::C) {
-			b += shift ? 0.1 : -0.1;
-		}
-		else if (keyCode == vk::R) {
+		if (keyCode == vk::R) {
 			resetSimulation();
+		}
+		else if (keyCode == vk::V) {
+			startRecording();
 		}
 		else
 			processKey(keyCode, 1);
@@ -125,41 +102,43 @@ struct gameForm : public form
 		processKey(keyCode, -1);
 	}
 	void processKey(cvk& keyCode, fp mult) {
+		cfp& speedMultiplier = mult * 0.01;
+		cfp& angleMultiplier = mult * 0.1;
 		if (keyCode == vk::W)
 		{
-			acceleration += forward * mult;
+			acceleration += forward * speedMultiplier;
 		}
 		else if (keyCode == vk::S)
 		{
-			acceleration -= forward * mult;
+			acceleration -= forward * speedMultiplier;
 		}
 		else if (keyCode == vk::A)
 		{
-			acceleration -= right * mult;
+			acceleration -= right * speedMultiplier;
 		}
 		else if (keyCode == vk::D)
 		{
-			acceleration += right * mult;
+			acceleration += right * speedMultiplier;
 		}
 		else if (keyCode == vk::Q)
 		{
-			acceleration -= up * mult;
+			acceleration += up * speedMultiplier;
 		}
 		else if (keyCode == vk::E)
 		{
-			acceleration += up * mult;
+			acceleration -= up * speedMultiplier;
 		}
 		else if (keyCode == vk::Right) {
-			angularVelocity.z += mult;
+			angularVelocity.z -= angleMultiplier;
 		}
 		else if (keyCode == vk::Left) {
-			angularVelocity.z -= mult;
+			angularVelocity.z += angleMultiplier;
 		}
 		else if (keyCode == vk::Up) {
-			angularVelocity.x += mult;
+			angularVelocity.x += angleMultiplier;
 		}
 		else if (keyCode == vk::Down) {
-			angularVelocity.x -= mult;
+			angularVelocity.x -= angleMultiplier;
 		}
 		else if (keyCode == vk::LShift || keyCode == vk::RShift) {
 			shift = mult > 0;
@@ -190,58 +169,94 @@ struct gameForm : public form
 		);
 		mainTile.clear();
 
-		GridContainer closeMolecules{};
 		for (Molecule* const& m : molecules) {
+			m->velocity = m->newVelocity;
+			//m->color = colorPalette::green;
 			predictBehavior(m->acceleration, m->velocity, m->centerOfMass, simulationStep);
-			if (!mainTile.bounds.contains(m->centerOfMass))
+			m->newVelocity = m->velocity;
+			m->shouldDelete = !mainTile.bounds.contains(m->centerOfMass);
+			if (m->shouldDelete)
+			{
 				molecules.erase(&m);
+			}
 			else
 			{
 				mainTile.AddBodyUnsafe(m);
-				closeMolecules.addValue(m);
+				if (m->collidedWith.size() > 0x10) {
+					m->color = colorPalette::red;
+				}
+				m->collidedWith.clear();
+				//m->color = colorPalette::green;
 			}
 		}
+		closeMolecules.updateCells([](Molecule* m) {return m->shouldDelete; });
 		molecules.update();
 		mainTile.CalculateMassDistribution();
 		renderTarget.fill(colorPalette::black);
-		lennartJonesForceGraph->dots.clear();
-		for (Molecule* const& m : molecules) {
+
+		std::for_each(std::execution::par_unseq, molecules.begin(), molecules.end(), [&worldToScreen, this, &renderTarget, &depthBuffer](Molecule*& m) {
 			m->acceleration = mainTile.CalculateForce(m->centerOfMass);
-			m->color = colorPalette::red;
-			for (Molecule* otherMolecule : closeMolecules.findNearMolecules(m, 1)) {
-				if (otherMolecule != m) {
-					m->color = colorPalette::green;
+			closeMolecules.processNearCells(m, doubleMoleculeRadius, [&m](Molecule& otherMolecule) {
+				if (&otherMolecule != m) {
 					//from othermolecule to m. this makes a positive amount repel from otherMolecule
-					vec3 difference = m->centerOfMass - otherMolecule->centerOfMass;
+					vec3 difference = m->centerOfMass - otherMolecule.centerOfMass;
 					cfp& distanceSquared = difference.lengthSquared();
 
-					if (distanceSquared < 1) {
-						cfp& distance = sqrt(distanceSquared);
-						cvec3& normal = difference / distance;
-						cfp& lennartJonesForce = orbitForce(distance);
-						lennartJonesForceGraph->dots.push_back(vec2(distance, lennartJonesForce));
-						//lennard jones potential
-						m->acceleration += lennartJonesForce * normal;
+					if (distanceSquared < math::squared(doubleMoleculeRadius) && distanceSquared > 0) {
+						//make sure we're only colliding once
+						m->mutex.lock();
+						//we don't have to add the collision to m->collidedWith, since m only gets processed once this frame
+						cbool& contains = arrayContains(m->collidedWith, &otherMolecule);
+						m->mutex.unlock();
+						if (!contains) {
+							otherMolecule.mutex.lock();
+							otherMolecule.collidedWith.push_back(m);
+							otherMolecule.mutex.unlock();
+							//m->color = colorPalette::red;
+							//otherMolecule.color = colorPalette::red;
+							//just swap velocities for now. wouldn't work when 3 molecules collide at the same time
+							//when exchange = 1, all energy is preserved.
+							//push bodies apart
+							fp exchange = 0.5;
+							vec3 v1 = m->newVelocity;
+							vec3 v2 = otherMolecule.newVelocity;
+							cfp& distance = sqrt(distanceSquared);
+							vec3 pushForce = (difference / distance) * math::squared(1 - distance) * 0.2;
+
+							otherMolecule.newVelocity = v1 * exchange + v2 * (1 - exchange) - pushForce;
+							m->newVelocity = v2 * exchange + v1 * (1 - exchange) + pushForce;
+						}
 					}
 				}
-			}
+				});
+
+
 			vec4 multipliedPosition = worldToScreen.multPointMatrix<4>(m->centerOfMass);
 			cfp& distanceFromScreen = (m->centerOfMass - cameraPosition).length();
 			multipliedPosition /= multipliedPosition.w;
 			if (multipliedPosition.z > -1 && multipliedPosition.z < 1) {
 				solidBrush<fp, vect2<fsize_t>> depthBrush{ distanceFromScreen };
-				fillEllipseCentered(renderTarget, rectangle2(vec2(multipliedPosition), vec2()).expanded(renderTarget.size.x / distanceFromScreen),
-					DepthBufferBrush(
-						//top
-						solidColorBrush(m->color), depthBrush,
-						//bottom
-						renderTarget, depthBuffer
-					));
+				fillTransformedSphere(renderTarget, sphere(m->centerOfMass, moleculeRadius), cameraPosition, rotationTransform, 90 * math::degreesToRadians, DepthBufferBrush(
+					//top
+					solidColorBrush(m->color), depthBrush,
+					//bottom
+					renderTarget, depthBuffer
+				));
+				//fillEllipse(renderTarget, rectangle2(vec2(multipliedPosition), vec2()).expanded(renderTarget.size.x / distanceFromScreen),
+				//	DepthBufferBrush(
+				//		//top
+				//		solidColorBrush(m->color), depthBrush,
+				//		//bottom
+				//		renderTarget, depthBuffer
+				//	));
 				//renderTarget.setValue(veci2(multipliedPosition), colorPalette::red);
 			}
-		}
+			});
+		//fillLine(renderTarget, vec2(0, renderTarget.size.y / 2), vec2(renderTarget.size.x, renderTarget.size.y / 2), brushes::green);
+		//fillLine(renderTarget, vec2(renderTarget.size.x / 2, 0), vec2(renderTarget.size.x / 2, renderTarget.size.y), brushes::green);
 		renderChildren(position, renderTarget);
-		writer->addFrame(renderTarget);
+		if (writer)
+			writer->addFrame(renderTarget);
 	}
 };
 gameForm* mainForm = new gameForm();
@@ -254,8 +269,8 @@ int main(int argc, char* argv[])
 
 void gameForm::layout(crectanglei2& newRect)
 {
-	delete writer;
-	writer = new videoWriter(newRect.size, 60, workingDirectory / ("video " + timeToString("{:%Y-%m-%d_%H-%M-%S}") + ".mp4"));
+	if (writer) {
+		startRecording();
+	}
 	control::layout(newRect);
-	lennartJonesForceGraph->layout(rectanglei2(0, 0, 0x200, 0x100));
 }

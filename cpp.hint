@@ -16,3 +16,6 @@
 #define baseVecConstructor(n) constexpr ~baseVec() requires std::is_trivially_destructible_v<T> = default; constexpr ~baseVec() { for (T & member : axis) member.~T(); } constexpr baseVec(const std::array<T, n> &axis) : axis(axis) { }
 #define addTemplateTypes(shortenedTemplateName) template <typename T, fsize_t axisCount> using c##shortenedTemplateName##tn = const shortenedTemplateName##tn<T, axisCount>; addTemplateSizes(shortenedTemplateName) addTemplateSizes(c##shortenedTemplateName) addTemplateType(shortenedTemplateName, , fp) addTemplateType(shortenedTemplateName, i, int) addTemplateType(shortenedTemplateName, l, long) addTemplateType(shortenedTemplateName, b, bool) addTemplateType(shortenedTemplateName, s, size_t)
 #define addMemberName(memberName, expression) constexpr T &memberName() { return expression; } constexpr const T &memberName() const { return expression; }
+#define wrap(__VA_ARGS__)
+#define constexpr20
+#define wrap(__VA_ARGS__)

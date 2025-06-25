@@ -13,15 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\BarnesHut">
-      <UniqueIdentifier>{1088e5ef-914b-4d3f-85e7-a081a1c84d63}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Molecule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -32,16 +32,25 @@
     <ClInclude Include="src\gameInfo.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\RigidBody.h">
-      <Filter>Source Files\BarnesHut</Filter>
-    </ClInclude>
     <ClInclude Include="src\Molecule.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\BarnesHutTile1.h">
-      <Filter>Source Files\BarnesHut</Filter>
-    </ClInclude>
     <ClInclude Include="src\GridContainer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Player.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Camera.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MoleculeType.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MolecularJoint.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PlacementMode.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

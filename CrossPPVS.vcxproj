@@ -192,6 +192,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Molecule.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -200,11 +201,14 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\BarnesHutTile1.h" />
+    <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\gameInfo.h" />
     <ClInclude Include="src\GridContainer.h" />
+    <ClInclude Include="src\MolecularJoint.h" />
     <ClInclude Include="src\Molecule.h" />
-    <ClInclude Include="src\RigidBody.h" />
+    <ClInclude Include="src\MoleculeType.h" />
+    <ClInclude Include="src\PlacementMode.h" />
+    <ClInclude Include="src\Player.h" />
     <ClInclude Include="src\stdafx.h" />
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,1 @@
+because of some energy (maybe because of player movement), the particles are slowly moving to the border of the simulation region.

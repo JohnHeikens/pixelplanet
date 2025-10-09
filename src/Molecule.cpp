@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "Molecule.h"
 #include "MolecularJoint.h"
+fp Molecule::getDensity() const
+{
+	return mass / (radius * radius * radius * 8);
+}
 Molecule::~Molecule() {
 	for (MolecularJoint* joint : joints) {
 		Molecule* otherMolecule = joint->molecule;

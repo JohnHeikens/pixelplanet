@@ -6,7 +6,9 @@ struct MolecularJoint {
 };
 constexpr fp checkAngleMargin = math::fpepsilon;
 constexpr fp angleMargin = 0.1;
+//the axes at which a molecule will have to figure out to find it's orientation.
 constexpr vec3 axis1 = vec3(1, 0, 0);
+constexpr vec3 axis2 = vec3(0, 1, 0);
 
 //potentialAxis has to be normalized!
 //will return vec3() when the it's not orthogonal
@@ -37,9 +39,15 @@ constexpr bool isColinear(cfp& angleInRadians) {
 constexpr bool isPerpendicular(cfp& angleInRadians) {
 	return angleInRadians > (math::PI * (0.5 - angleMargin)) && angleInRadians < (math::PI * (0.5 + angleMargin));
 };
+
+constexpr vec3 getOrthogonalVector(Molecule* m, vec3 difference) {
+	if (m->axesSet < 2)return vec3();
+	else return getOrthogonalVector(m->rotation.rotateInverse(difference).normalized(), std::acos(angleMargin));
+}
+
 //rotationDifference:
 //the quaternion to multiply with to go from the old to the new rotation
-static inline void setNewRotation(Molecule* m, Quaternion rotationDifference) {
+static inline void adjustRotation(Molecule* m, Quaternion rotationDifference) {
 	//first, increase axesSet to prevent infinite recursion
 	m->axesSet++;
 	for (MolecularJoint* joint : m->joints) {
@@ -48,18 +56,18 @@ static inline void setNewRotation(Molecule* m, Quaternion rotationDifference) {
 		vec3 orthogonalAxis = getOrthogonalVector(joint->relativePosition.normalized());
 		if (orthogonalAxis != vec3())
 		{
-			joint->relativePosition = orthogonalAxis * doubleMoleculeRadius;
+			joint->relativePosition = orthogonalAxis * (m->radius + joint->molecule->radius);
 			if (joint->molecule->axesSet < m->axesSet)
-				setNewRotation(joint->molecule, rotationDifference);
+				adjustRotation(joint->molecule, rotationDifference);
 		}
 	}
 	//rotationaldifference first, because we're rotating the internal joints
 	m->rotation = m->rotation * rotationDifference;
 }
 
-static inline void Join(Molecule* mOld, Molecule* mNew, cvec3& m1Tom2) {
-	mOld->joints.push_back(new MolecularJoint{ mNew, mOld->rotation.rotateInverse(m1Tom2) });
-	mNew->joints.push_back(new MolecularJoint{ mOld, mNew->rotation.rotateInverse(-m1Tom2) });
+static inline void Join(Molecule* m1, Molecule* m2, cvec3& m1Tom2) {
+	m1->joints.push_back(new MolecularJoint{ m2, m1->rotation.rotateInverse(m1Tom2) });
+	m2->joints.push_back(new MolecularJoint{ m1, m2->rotation.rotateInverse(-m1Tom2) });
 }
 static inline void Join(Molecule* m1, Molecule* m2) {
 	Join(m1, m2, m2->centerOfMass - m1->centerOfMass);

@@ -4,15 +4,7 @@
 #include <math/rectangle/rectangletn.h>
 #include "include/array/arrayFunctions/arrayFunctions.h"
 #pragma once
-namespace std {
-	template<>
-	struct hash<veci3> {
-		size_t operator()(const veci3& v) const noexcept {
-			constexpr size_t prime = 92821ULL;
-			return (size_t)v[0] + v[1] * prime + v[2] * (prime * prime);
-		}
-	};
-};
+
 struct GridContainer {
 	std::unordered_map<veci3, fastList< Molecule*>> cells{};
 	std::vector<Molecule*> toRemove = std::vector<Molecule*>();

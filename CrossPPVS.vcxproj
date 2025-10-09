@@ -207,9 +207,13 @@
     <ClInclude Include="src\MolecularJoint.h" />
     <ClInclude Include="src\Molecule.h" />
     <ClInclude Include="src\MoleculeType.h" />
+    <ClInclude Include="src\octreeCollisions.h" />
     <ClInclude Include="src\PlacementMode.h" />
+    <ClInclude Include="src\PlanetBlueprint.h" />
     <ClInclude Include="src\Player.h" />
+    <ClInclude Include="src\RayCastHit.h" />
     <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\TransparentSphereBrush.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

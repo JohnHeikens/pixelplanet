@@ -1,0 +1,9 @@
+{
+	"surface": {
+		"texture":"surface.png"
+	},
+	"atmosphere":{
+		"texture":"atmosphere-more-transparent.png",
+		"treshold":0.9
+	}
+}

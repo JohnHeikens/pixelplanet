@@ -53,6 +53,18 @@
     <ClInclude Include="src\PlacementMode.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\TransparentSphereBrush.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RayCastHit.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\octreeCollisions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PlanetBlueprint.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

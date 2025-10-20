@@ -11,3 +11,4 @@ data/version/other
 .vs
 Debug
 *.mp4
+*.clbin
